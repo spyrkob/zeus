@@ -4,6 +4,12 @@
 - name: "Created config directory for jboss-eap7"
   file: path=/etc/jboss-eap7/ state=directory group=jboss owner=jboss
 
+- name: "Create jboss logs directory outside root partition"
+  file: state=directory dest={{jboss_logs_folder}} group=jboss owner=jboss
+
+- name: "Create symlink for jboss logs"
+  file: state=link src={{jboss_logs_folder}} dest=/opt/rh/eap7/root/usr/share/wildfly/standalone/log/ force=yes
+
 - name: "Deploy configuration for jboss-eap7"
   template: src=templates/eap7-standalone.service.j2 dest=/usr/lib/systemd/system/eap7-standalone.service group=jboss owner=jboss
 
