@@ -3,8 +3,6 @@
   gather_facts: no
   become: yes
   become_user: root
-  vars_files:
-    - zeus_vars.yml
   tasks:
     - name: " ******* STAGE 0 *******"
       debug: msg=" >>> Check Ansible Set Up <<<"
@@ -12,12 +10,23 @@
     - name: "Ensure ansible facts.d is created"
       file: path=/etc/ansible/facts.d/ state=directory
 
+    - stat: path=secrets.yml
+      register: stat_result
+
     - name: "Load secrets"
       include_vars: secrets.yml
-      when: ansible_hostname == "thunder"
+      when: stat_result.stat.exists == True
 
     - include_vars: dummy_secret.yml
-      when: ansible_hostname != "thunder"
+      when: stat_result.stat.exists == False
+
+    - name: "Checkout vars file"
+      git: repo={{vars_repo.url}} dest={{vars_repo.dest}}
+      environment:
+        - GIT_SSL_NO_VERIFY: true
+      check_mode: no
+
+    - include_vars: '{{vars_repo.dest}}/zeus_vars.yml'
 
     - include: tasks/repos.yml
 
@@ -68,12 +77,27 @@
     - include: tasks/tools.yml
 
 - hosts: localhost
-  vars_files:
-    - zeus_vars.yml
   roles:
     - zeus_cronjobs
     - monit
   gather_facts: no
   become: yes
   become_user: root
-  tasks:
+  pre_tasks:
+    - stat: path=secrets.yml
+      register: stat_result
+
+    - name: "Load secrets"
+      include_vars: secrets.yml
+      when: stat_result.stat.exists == True
+
+    - include_vars: dummy_secret.yml
+      when: stat_result.stat.exists == False
+
+    - name: "Checkout vars file"
+      git: repo={{vars_repo.url}} dest={{vars_repo.dest}}
+      environment:
+        - GIT_SSL_NO_VERIFY: true
+      check_mode: no
+
+    - include_vars: '{{vars_repo.dest}}/zeus_vars.yml' 
