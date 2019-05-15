@@ -25,6 +25,7 @@
       environment:
         - GIT_SSL_NO_VERIFY: true
       check_mode: no
+      when: skip_checkout is not defined or skip_checkout==False
 
     - include_vars: '{{vars_repo.dest}}/zeus_vars.yml'
 
@@ -99,5 +100,6 @@
       environment:
         - GIT_SSL_NO_VERIFY: true
       check_mode: no
+      when: skip_checkout is not defined or skip_checkout==False
 
     - include_vars: '{{vars_repo.dest}}/zeus_vars.yml' 
