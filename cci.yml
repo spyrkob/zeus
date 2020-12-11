@@ -9,11 +9,7 @@
     - name: " ******* STAGE 0 *******"
       debug: msg=" >>> Check Ansible Set Up <<<"
 
-    - name: "Ensure ansible facts.d is created"
-      file: path=/etc/ansible/facts.d/ state=directory
-
-    - name: " ******* STAGE 1 *******"
-      debug: msg=" >>> Set Up Required Infrastructure Services <<<"
-    - include: tasks/nginx.yml
-    - include: tasks/old-releases.yml
-    - include: tasks/maven.yml
+    - name: "Test file"
+      copy:
+        src: test.txt
+        dest: /root/zeus/test.txt
