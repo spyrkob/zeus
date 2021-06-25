@@ -108,6 +108,28 @@ jenkins:
       rightPortlets:
       - statBuilds:
           name: "Build statistics"
+  - dashboard:
+      name: "TCK"
+      columns:
+{% for col in jenkins.view.tabs.columns  %}
+        - "{{ col }}"
+{% endfor %}
+      includeStdJobList: true
+      jobNames:
+      - "appserver"
+      - "atinject"
+      - "beanvalidation"
+      - "buildcts"
+      - "cdi"
+      - "glassfishpackage"
+      - "jaxb23"
+      - "jaxws"
+      - "modspackage"
+      - "runner"
+      - "saaj"
+      - "toplevel"
+      - "websocket"
+
   viewsTabBar: "standard"
 tool:
 
