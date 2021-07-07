@@ -68,13 +68,46 @@
           name: COMPONENT_UPGRADE_LOGGER
           default: "{{ component_alignment.config.loggerurl }}"
 {% endif %}
+{% if item.archive is defined %}
+      - string:
+          name: ARCHIVE_PATH
+          default: "{{ item.archive }}"
+{% endif %}
+{% if item.junit is defined %}
+      - string:
+          name: JUNIT_PATH
+          default: "{{ item.junit }}"
+{% endif %}
+{% if item.params is defined %}
+{% for p in item.params %}
+      - {{ p.type }}:
+          name: {{ p.name }}
+          default: {{ p.default | default('') }}
+{% endfor %}
+{% endif %}
+{% if item.download is defined %}
+      - string:
+          name: DOWNLOAD_URL
+          default: {{ item.download.url }}
+      - string:
+          name: DOWNLOAD_FILE
+          default: {{ item.download.file }}
+{% endif %}
+{% if item.websocket is defined %}
+      - string:
+          name: WEBSOCKET_CONFIG_URL
+          default: {{ item.websocket.config_url }}
+      - string:
+          name: WEBSOCKET_DEPLOY_URL
+          default: {{ item.websocket.deploy_url }}
+{% endif %}
 
     pipeline-scm:
       scm:
         - git:
-            url: {{ jenkinsfile.git_repo }}
+            url: {{ item.jenkinsfile_git_repo | default(jenkinsfile.git_repo) }}
             branches:
-              - origin/master
+              - {{ item.jenkinsfile_git_branch | default('origin/master') }}
       script-path: {{ item.jenkinsfile }}
       lightweight-checkout: true
     build-discarder:
